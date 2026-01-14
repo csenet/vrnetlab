@@ -88,6 +88,13 @@ class Ubuntu_vm(vrnetlab.VM):
             # Disable cloud-init for the subsequent boots
             cfg_file.write("runcmd:\n")
             cfg_file.write("  - touch /etc/cloud/cloud-init.disabled\n")
+            # Add custom runcmd from environment variable
+            extra_runcmd = os.environ.get("CLOUD_INIT_RUNCMD", "")
+            if extra_runcmd:
+                for cmd in extra_runcmd.split(";"):
+                    cmd = cmd.strip()
+                    if cmd:
+                        cfg_file.write(f"  - {cmd}\n")
 
         with open("/network_config.yaml", "w") as net_cfg_file:
             net_cfg_file.write("version: 2\n")
